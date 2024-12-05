@@ -1,66 +1,79 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Accessibility/Compliance Checker API
+> An API for checking website accessibility compliance with WCAG (Web Content Accessibility Guidelines)
 
-## About Laravel
+## Description
+This project is a full-stack application built using Laravel for the backend and Vue.js for the frontend. It checks the accessibility of uploaded HTML files against WCAG guidelines and calculates a compliance score.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Running the App
+To run the App, you must have:
+- **PHP** (https://www.php.net/downloads)
+- **MySQL** (https://www.mysql.com/downloads/)
+- **Phpunit**
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Clone the repository to your local machine using the command
+```console
+$ git clone *remote repository url*
+```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Configure app
+Create an `.env` and copy `.env.example` content into it using the command.
 
-## Learning Laravel
+```console
+$ cp .env.example .env
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Environment
+You need to setup your api base url for the frontend usage. This is very important so as to be able to successfully call the backend api
+This can be configured based on your app url e.g  http://localhost:8000 or http://pluro-assessment.test. An example can be seen below
+```  
+VITE_API_URL=http://pluro-assessment.test/api
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### LARAVEL INSTALLATION
+Install the dependencies and start the server
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```console
+$ composer install
+$ php artisan key:generate
+$ php artisan serve
+```
 
-## Laravel Sponsors
+### VUE CONFIGURATION
+Install the dependencies and start the server
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```console
+$ npm install
+$ npm run dev
+```
 
-### Premium Partners
+You should be able to visit your app at your laravel app base url e.g http://localhost:8000 or http://pluro-assessment.test/ (Provided you use Laravel Valet).
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
 
-## Contributing
+### Testing
+Unit and feature tests were written to ensure the accuracy of the application and the correctness of its core functionality. These tests help verify that all endpoints, data processing logic, and accessibility checks are working as expected. To run the tests, use the following command:
+```
+$ composer test
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Swagger API Documentation
+The documentation for the API can be found- http://localhost:8000/api/documentation or http://pluro-assessment.test/api/documentation for (Valet user)
 
-## Code of Conduct
+### Programming Decisions
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+I have grouped the accessibility errors into four categories based on the WCAG principles. These categories help organize the issues in a way that aligns with the main accessibility criteria while keeping them focused on common issues found in web content.
 
-## Security Vulnerabilities
+1. **Text Alternatives** (Falls under **Perceivable**):  
+   This category includes issues related to missing text alternatives for non-text content. In this case, the errors occur when `img` elements are missing the `alt` attribute, which is essential for screen readers to convey the image content to visually impaired users.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+2. **Adaptable** (Falls under **Perceivable**):  
+   The adaptable category focuses on issues where the web content does not follow a proper structure that allows it to be adapted to different devices or assistive technologies. For example, incorrect header nesting, where a `<h3>` follows an `<h1>`, is considered a violation.
 
-## License
+3. **Navigable** (Falls under **Operable**):  
+   This category addresses issues that affect the user's ability to navigate through the website using various input methods like a keyboard or screen reader. An example is anchor tags that contain no text (`<a href="https://goal.com"></a>`), which are not meaningful to screen readers or users navigating by keyboard.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+4. **Distinguishable** (Falls under **Perceivable**):  
+   This category focuses on ensuring that text is distinguishable from the background to meet contrast standards. Issues in this group involve checking the contrast ratio between text and its background to ensure it is readable by users with visual impairments. For instance, low contrast between text and background color violates the contrast requirements.
+
+### Design Document
+The design document can be found at https://docs.google.com/document/d/1Vdcz0F8g8Qs2wiPxeBdPQ9DE1JwsQ_iRz_CVaNJwi2w/edit?tab=t.0 This document explains the architectural decision and approach and also the scoring logic implemented.
