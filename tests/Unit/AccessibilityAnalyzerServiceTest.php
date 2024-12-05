@@ -91,6 +91,79 @@ class AccessibilityAnalyzerServiceTest extends TestCase
     }
 
 
+    public function test_detects_color_contrast_issues()
+    {
+        $htmlContent = '<div style="color:#f0f0f0; background-color:#e0e0e0;">Content</div>';
+        $result = $this->service->analyze($htmlContent);
+
+        $issues = $result['issues']['distinguishable'] ?? [];
+        $this->assertNotEmpty($issues, 'No issues detected for insufficient color contrast.');
+
+        $this->assertCount(1, $issues, 'Unexpected number of issues detected for insufficient color contrast.');
+
+        $this->assertStringContainsString(
+            'The contrast between the colour of text and its background for the element is not sufficient to meet WCAG2.0 Level.',
+            $issues[0]['message'],
+            'The reported issue message for insufficient color contrast is incorrect or missing.'
+        );
+    }
+
+    public function test_does_not_report_issues_for_sufficient_color_contrast()
+    {
+        $htmlContent = '<div style="color:#000000; background-color:#FFFFFF;">Content</div>';
+        $result = $this->service->analyze($htmlContent);
+
+        $issues = $result['issues']['distinguishable'] ?? [];
+        $this->assertEmpty($issues, 'Unexpected issues detected for sufficient color contrast.');
+    }
+
+    public function test_calculate_compliance_score_with_no_issues()
+    {
+        $issues = [
+            'text_alternatives' => [],
+            'adaptable' => [],
+            'navigable' => [],
+            'distinguishable' => []
+        ];
+
+        $score = $this->service->calculateComplianceScore($issues);
+
+        // Assert that the compliance score is 100 when no issues are found
+        $this->assertEquals(100, $score, 'Compliance score should be 100 when no issues are found.');
+    }
+
+    public function test_calculate_compliance_score_with_partial_issues()
+    {
+        $issues = [
+            'text_alternatives' => [['message' => 'img element missing alt attribute.']],
+            'adaptable' => [['message' => 'Header nesting - header following <h1> is incorrect.']],
+            'navigable' => [],
+            'distinguishable' => []
+        ];
+
+        $score = $this->service->calculateComplianceScore($issues);
+
+        // Assert that the compliance score is 50 when 2 out of 4 categories have issues
+        $this->assertEquals(50, $score, 'Compliance score should be 50 when 2 out of 4 categories have issues.');
+    }
+
+    public function test_calculate_compliance_score_with_all_issues()
+    {
+        $issues = [
+            'text_alternatives' => [['message' => 'img element missing alt attribute.']],
+            'adaptable' => [['message' => 'Header nesting - header following <h1> is incorrect.']],
+            'navigable' => [['message' => 'Anchor contains no text.']],
+            'distinguishable' => [['message' => 'The contrast between the colour of text and its background for the element is not sufficient to meet WCAG2.0 Level.']]
+        ];
+
+        $score = $this->service->calculateComplianceScore($issues);
+
+        // Assert that the compliance score is 0 when all 4 categories have issues
+        $this->assertEquals(0, $score, 'Compliance score should be 0 when all 4 categories have issues.');
+    }
+
+
+
 
 
 }
