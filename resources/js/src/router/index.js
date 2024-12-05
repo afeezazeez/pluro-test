@@ -10,6 +10,15 @@ const routes = [
             redirectIfAuthenticated: false,
             title:'Home'
         },
+
+    },
+    {
+        path: '/:pathMatch(.*)*',
+        name: 'NotFound',
+        component: () => import('../pages/404.vue'),
+        meta: {
+            title: 'Page Not Found',
+        },
     }
 ]
 
