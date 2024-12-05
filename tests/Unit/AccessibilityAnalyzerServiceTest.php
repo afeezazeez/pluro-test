@@ -64,6 +64,33 @@ class AccessibilityAnalyzerServiceTest extends TestCase
         $this->assertEmpty($issues, 'Unexpected issues detected for correctly nested headings.');
     }
 
+    public function test_detects_link_text_issues()
+    {
+        $htmlContent = '<a href="http://example.com"></a>';
+        $result = $this->service->analyze($htmlContent);
+
+        $issues = $result['issues']['navigable'] ?? [];
+        $this->assertNotEmpty($issues, 'No issues detected for link with missing text.');
+
+        $this->assertCount(1, $issues, 'Unexpected number of issues detected for link with missing text.');
+
+        $this->assertStringContainsString(
+            'Anchor contains no text.',
+            $issues[0]['message'],
+            'The reported issue message for a link with missing text is incorrect or missing.'
+        );
+    }
+
+    public function test_does_not_report_issue_for_links_with_valid_text()
+    {
+        $htmlContent = '<a href="http://example.com">Visit Example</a>';
+        $result = $this->service->analyze($htmlContent);
+
+        $issues = $result['issues']['navigable'] ?? [];
+        $this->assertEmpty($issues, 'Unexpected issues detected for a link with valid text.');
+    }
+
+
 
 
 }
