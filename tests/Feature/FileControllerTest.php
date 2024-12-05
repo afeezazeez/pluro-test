@@ -62,4 +62,25 @@ class FileControllerTest extends TestCase
         ]);
 
     }
+
+    public function test_that_it_returns_error_for_non_html_file()
+    {
+        $response = $this->json('POST', route('file.upload'), [
+            'file' => UploadedFile::fake()->create('test.txt', 100, 'text/plain')
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonFragment([
+            'success' => false,
+            'message' => 'The file must be of type: .html.',
+        ]);
+
+        $response->assertJsonFragment([
+            'errors' => [
+                'file' => [
+                    'The file must be of type: .html.'
+                ]
+            ]
+        ]);
+    }
 }
