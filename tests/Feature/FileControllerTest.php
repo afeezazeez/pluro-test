@@ -83,4 +83,23 @@ class FileControllerTest extends TestCase
             ]
         ]);
     }
+
+    public function test_that_it_returns_error_for_missing_file()
+    {
+        $response = $this->json('POST', route('file.upload'), []);
+
+        $response->assertStatus(422);
+        $response->assertJsonFragment([
+            'success' => false,
+            'message' => 'The HTML file is required.',
+        ]);
+
+        $response->assertJsonFragment([
+            'errors' => [
+                'file' => [
+                    'The HTML file is required.'
+                ]
+            ]
+        ]);
+    }
 }
