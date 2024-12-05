@@ -1,0 +1,186 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Pluro Assessment Api Documentation",
+        "description": "L5 Swagger OpenApi description",
+        "contact": {
+            "email": "azeezafeez212@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/v1/upload": {
+            "post": {
+                "tags": [
+                    "File Upload"
+                ],
+                "summary": "Upload HTML File for Accessibility Check",
+                "description": "Uploads an HTML file to be checked for accessibility compliance. Returns compliance score and issues.",
+                "operationId": "8213406d664380b776001a238c1798fb",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "file": {
+                                        "description": "The HTML file to upload",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successfully uploaded and analyzed the file",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "compliance_score": {
+                                                    "type": "integer",
+                                                    "example": 0
+                                                },
+                                                "issues": {
+                                                    "properties": {
+                                                        "text_alternatives": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "properties": {
+                                                                    "message": {
+                                                                        "type": "string",
+                                                                        "example": "img element missing alt attribute."
+                                                                    },
+                                                                    "element": {
+                                                                        "type": "string",
+                                                                        "example": "&lt;img src=&quot;image.jpg&quot;&gt;"
+                                                                    },
+                                                                    "suggested_fix": {
+                                                                        "type": "string",
+                                                                        "example": "Add an alt attribute to your img element."
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "adaptable": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "properties": {
+                                                                    "message": {
+                                                                        "type": "string",
+                                                                        "example": "Header nesting - header following <h1> is incorrect."
+                                                                    },
+                                                                    "element": {
+                                                                        "type": "string",
+                                                                        "example": "&lt;h3&gt;Subheading&lt;/h3&gt;"
+                                                                    },
+                                                                    "suggested_fix": {
+                                                                        "type": "string",
+                                                                        "example": "Modify the header levels. The <h1> heading should be followed by <h2>, not <h3>."
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "navigable": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "properties": {
+                                                                    "message": {
+                                                                        "type": "string",
+                                                                        "example": "Anchor contains no text."
+                                                                    },
+                                                                    "element": {
+                                                                        "type": "string",
+                                                                        "example": "&lt;a href=&quot;https://goal.com&quot;&gt;&lt;/a&gt;"
+                                                                    },
+                                                                    "suggested_fix": {
+                                                                        "type": "string",
+                                                                        "example": "Add text to the element or the title attribute of the a element or, if an image is used within the anchor, add Alt text to the image."
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "distinguishable": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "properties": {
+                                                                    "message": {
+                                                                        "type": "string",
+                                                                        "example": "The contrast between the colour of text and its background for the element is not sufficient to meet WCAG2.0 Level."
+                                                                    },
+                                                                    "element": {
+                                                                        "type": "string",
+                                                                        "example": "&lt;div style=&quot;color: #D3D3D3; background-color: #A9A9A9;&quot;&gt;This is a low-contrast text.&lt;/div&gt;"
+                                                                    },
+                                                                    "suggested_fix": {
+                                                                        "type": "string",
+                                                                        "example": "Use a colour contrast evaluator to determine if text and background colours provide a contrast ratio of 4.5:1 for standard text, or 3:1 for larger text. Change colour codes to produce sufficient contrast"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Success"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request, invalid file",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invalid file format"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "File Upload",
+            "description": "File Upload"
+        }
+    ]
+}

@@ -59,7 +59,7 @@ const uploadFile = async () => {
 
 <template>
     <div class="min-h-screen bg-gray-100 flex flex-col items-center p-6">
-        <h1 class="text-2xl font-bold text-gray-800 mb-6">File Upload for Accessibility Check</h1>
+        <h1 class="text-2xl font-bold text-gray-800 mb-6">File Upload for Accessibility/Compliance Check</h1>
 
         <!-- File Input and Upload Button -->
         <div class="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
