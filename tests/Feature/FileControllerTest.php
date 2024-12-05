@@ -102,4 +102,25 @@ class FileControllerTest extends TestCase
             ]
         ]);
     }
+
+    public function test_that_it_returns_file_size_limit_error()
+    {
+        $response = $this->json('POST', route('file.upload'), [
+            'file' => UploadedFile::fake()->create('largefile.html', 5000) // 5MB file
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonFragment([
+            'success' => false,
+            'message' => 'The uploaded file size must not exceed 1MB.',
+        ]);
+
+        $response->assertJsonFragment([
+            'errors' => [
+                'file' => [
+                    'The uploaded file size must not exceed 1MB.'
+                ]
+            ]
+        ]);
+    }
 }
