@@ -26,6 +26,7 @@ class AccessibilityAnalyzerService
         $issues = [
             'text_alternatives' => $this->checkMissingAlt($xpath),
             'adaptable' => $this->checkSkippedHeadings($xpath),
+            'navigable' => $this->checkLinkText($xpath),
         ];
 
         $complianceScore = $this->calculateComplianceScore($issues);
@@ -80,6 +81,30 @@ class AccessibilityAnalyzerService
             }
 
             $previousLevel = $currentLevel;
+        }
+
+        return $issues;
+    }
+
+    /**
+     * Check for links missing descriptive text.
+     * @param DOMXPath $xpath
+     * @return array
+     */
+    private function checkLinkText(DOMXPath $xpath): array
+    {
+        $issues = [];
+        $links = $xpath->query('//a');
+
+        foreach ($links as $link) {
+            $linkText = trim($link->nodeValue);
+            if (empty($linkText) && !$link->getAttribute('aria-label')) {
+                $issues[] = [
+                    'message' => 'Anchor contains no text.',
+                    'element' => $link->C14N(),
+                    'suggested_fix' => 'Add text to the element or the title attribute of the a element or, if an image is used within the anchor, add Alt text to the image.',
+                ];
+            }
         }
 
         return $issues;
