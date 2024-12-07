@@ -112,6 +112,7 @@ class FileController extends Controller
      *         )
      *     )
      * )
+     * @throws \Exception
      */
     public function __invoke(UploadHtmlRequest $request): JsonResponse
     {

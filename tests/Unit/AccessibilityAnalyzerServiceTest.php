@@ -1,6 +1,7 @@
 <?php
 
 namespace Tests\Unit;
+use App\Exceptions\ClientErrorExpection;
 use PHPUnit\Framework\TestCase;
 use App\Services\AccessibilityAnalyzerService;
 
@@ -162,6 +163,69 @@ class AccessibilityAnalyzerServiceTest extends TestCase
         $this->assertEquals(0, $score, 'Compliance score should be 0 when all 4 categories have issues.');
     }
 
+    public function test_that_it_throws_exception_for_empty_html_content()
+    {
+        $this->expectException(ClientErrorExpection::class);
+        $this->expectExceptionMessage('The HTML file is empty or invalid.');
+        $this->service->analyze('');
+    }
+
+    public function test_that_it_returns_no_issues_for_valid_html_content()
+    {
+        $htmlContent = '<html><body><h1>Heading 1</h1><img src="image.jpg" alt="Image"></body></html>';
+
+        $result = $this->service->analyze($htmlContent);
+
+        $this->assertEmpty($result['issues']['text_alternatives']);
+        $this->assertEmpty($result['issues']['adaptable']);
+        $this->assertEmpty($result['issues']['navigable']);
+        $this->assertEmpty($result['issues']['distinguishable']);
+        $this->assertEquals(100,$result['compliance_score']);
+    }
+
+    public function test_that_it_identifies_multiple_missing_alt_attributes()
+    {
+        $htmlContent = '<html><body><img src="image1.jpg"><img src="image2.jpg"></body></html>';
+
+        $service = new AccessibilityAnalyzerService();
+        $result = $service->analyze($htmlContent);
+        $this->assertGreaterThan(1, count($result['issues']['text_alternatives']));
+    }
+
+    public function test_that_it_identifies_multiple_skipped_heading_levels()
+    {
+        $htmlContent = '<html><body><h1>Heading 1</h1><h3>Heading 3</h3><h5>Heading 5</h5></body></html>';
+
+        $service = new AccessibilityAnalyzerService();
+        $result = $service->analyze($htmlContent);
+        $this->assertGreaterThan(1, count($result['issues']['adaptable']));
+    }
+
+    public function test_that_it_identifies_multiple_missing_link_texts()
+    {
+        $htmlContent = '
+        <html>
+            <body>
+                <a href="/about"></a>
+                <a href="/services" aria-label=""></a>
+                <a href="/contact"></a>
+                <a href="/home" aria-label="home"></a>
+            </body>
+        </html>';
+
+        $service = new AccessibilityAnalyzerService();
+        $result = $service->analyze($htmlContent);
+        $this->assertGreaterThan(1, count($result['issues']['navigable']));
+    }
+
+    public function test_that_it_does_not_identify_inline_styles_without_color_and_bg_color()
+    {
+        $htmlContent = '<html><body><div style="font-size: 20px;">Content</div></body></html>';
+
+        $service = new AccessibilityAnalyzerService();
+        $result = $service->analyze($htmlContent);
+        $this->assertEmpty($result['issues']['distinguishable']);
+    }
 
 
 

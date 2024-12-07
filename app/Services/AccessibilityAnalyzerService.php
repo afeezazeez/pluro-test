@@ -2,8 +2,11 @@
 
 namespace App\Services;
 
+use App\Exceptions\ClientErrorExpection;
 use DOMDocument;
 use DOMXPath;
+use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class AccessibilityAnalyzerService
 {
@@ -11,15 +14,22 @@ class AccessibilityAnalyzerService
      * Analyze the HTML content for accessibility issues.
      * @param string $htmlContent
      * @return array
+     * @throws \Exception
      */
     public function analyze(string $htmlContent): array
     {
+
+        if (empty($htmlContent)) {
+            throw new ClientErrorExpection('The HTML file is empty or invalid.', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
         $dom = new  DOMDocument();
 
         // Suppress warnings for invalid HTML and load content
         libxml_use_internal_errors(true);
         $dom->loadHTML($htmlContent, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         libxml_clear_errors();
+
 
         $xpath = new DOMXPath($dom);
 

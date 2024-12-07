@@ -105,6 +105,7 @@ class FileControllerTest extends TestCase
 
     public function test_that_it_returns_file_size_limit_error()
     {
+
         $response = $this->json('POST', route('file.upload'), [
             'file' => UploadedFile::fake()->create('largefile.html', 5000) // 5MB file
         ]);
@@ -123,4 +124,50 @@ class FileControllerTest extends TestCase
             ]
         ]);
     }
+
+    public function test_that_it_returns_error_for_empty_html_file()
+    {
+        // Simulate an empty HTML file by creating a file with no content
+        $emptyHtmlFile = UploadedFile::fake()->create('empty.html', 100, 'text/html');
+        file_put_contents($emptyHtmlFile->getRealPath(), '');
+
+        $response = $this->json('POST', route('file.upload'), [
+            'file' => $emptyHtmlFile
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonFragment([
+            'success' => false,
+            'message' => 'The HTML file is empty or invalid.',
+        ]);
+    }
+
+    public function test_that_it_can_upload_valid_html_file_without_issues()
+    {
+        $validHtmlContent = '<html><body><h1>Title</h1><p>This is a valid paragraph.</p></body></html>';
+
+        $validHtmlFile = UploadedFile::fake()->create('valid.html', 100, 'text/html');
+        file_put_contents($validHtmlFile->getRealPath(), $validHtmlContent);
+
+        $response = $this->json('POST', route('file.upload'), [
+            'file' => $validHtmlFile
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            "success" => true,
+            "message" => "Success",
+            "data" => [
+                "compliance_score" => 100,
+                "issues" => [
+                    "text_alternatives" => [],
+                    "adaptable" => [],
+                    "navigable" => [],
+                    "distinguishable" => [],
+                ]
+            ]
+        ]);
+    }
+
+
 }
