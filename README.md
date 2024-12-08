@@ -9,6 +9,7 @@ This project is a full-stack application built using Laravel for the backend and
 To run the App, you must have:
 - **PHP** (https://www.php.net/downloads)
 - **MySQL** (https://www.mysql.com/downloads/)
+- **Docker** (https://www.docker.com/products/docker-desktop/)
 - **Phpunit**
 
 Clone the repository to your local machine using the command
@@ -16,48 +17,44 @@ Clone the repository to your local machine using the command
 $ git clone *remote repository url*
 ```
 
-## Configure app
-Create an `.env` and copy `.env.example` content into it using the command.
-
-```console
-$ cp .env.example .env
-```
-
 ### Environment
-You need to setup your api base url for the frontend usage. This is very important so as to be able to successfully call the backend api
-This can be configured based on your app url e.g  http://localhost:8000 or http://pluro-assessment.test. An example can be seen below
-```  
-VITE_API_URL=http://pluro-assessment.test/api
+`.env` is generated automatically
+
+`VITE_API_URL=http://localhost:8000/api` is set by default. Please cross-check to ensure it's set.
+This is very important to be able to successfully call the backend api
+
+### Booting app
+Run the below command.
+```
+./setup.sh start
+```
+If you run into permissions error, try the below command, then run actual command again(same goes for other commands to be ran)
+```
+chmod +x ./setup.sh
 ```
 
-### LARAVEL INSTALLATION
-Install the dependencies and start the server
+### Stopping  app
 
-```console
-$ composer install
-$ php artisan key:generate
-$ php artisan serve
 ```
-
-### VUE CONFIGURATION
-Install the dependencies and start the server
-
-```console
-$ npm install
-$ npm run dev
+./setup.sh stop
 ```
-
-You should be able to visit your app at your laravel app base url e.g http://localhost:8000 or http://pluro-assessment.test/ (Provided you use Laravel Valet).
-
 
 ### Testing
-Unit and feature tests were written to ensure the accuracy of the application and the correctness of its core functionality. These tests help verify that all endpoints, data processing logic, and accessibility checks are working as expected. To run the tests, use the following command:
+Unit and feature tests were written to ensure the accuracy of the application and the correctness of its core functionality. These tests help verify that the endpoint, data processing logic, and accessibility checks are working as expected. To run the tests, use the following command:
 ```
-$ composer test
+$ ./tests.sh
 ```
 
 ### Swagger API Documentation
-The documentation for the API can be found- http://localhost:8000/api/documentation or http://pluro-assessment.test/api/documentation for (Valet user)
+The documentation for the API can be found- http://localhost:8000/api/documentation
+
+
+
+You should be able to visit your app at  http://localhost:8000
+
+
+
+
 
 ### Programming Decisions
 
