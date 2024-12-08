@@ -37,7 +37,7 @@ WORKDIR /var/www
 COPY . .
 
 # Configure Nginx
-COPY docker/nginx/laravel.conf /etc/nginx/nginx.conf
+COPY docker/nginx/laravel.conf /etc/nginx/conf.d/default.conf
 
 # Set file permissions
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
