@@ -36,6 +36,10 @@ WORKDIR /var/www
 # Copy project files
 COPY . .
 
+# Set environment variable for Nginx
+ARG PHP_UPSTREAM=app
+ENV PHP_UPSTREAM=${PHP_UPSTREAM}
+
 # Configure Nginx
 COPY docker/nginx/laravel.conf /etc/nginx/conf.d/default.conf
 
