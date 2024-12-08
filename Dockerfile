@@ -25,6 +25,14 @@ RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd sockets
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Install Node.js
+RUN apt-get update && apt-get install -y \
+    software-properties-common \
+    npm
+RUN npm install npm@latest -g && \
+    npm install n -g && \
+    n latest
+
 # Create system user
 RUN useradd -G www-data,root -u $uid -d /home/$user $user && \
     mkdir -p /home/$user/.composer && \
@@ -35,10 +43,6 @@ WORKDIR /var/www
 
 # Copy project files
 COPY . .
-
-# Set environment variable for Nginx
-ARG PHP_UPSTREAM=app
-ENV PHP_UPSTREAM=${PHP_UPSTREAM}
 
 # Configure Nginx
 COPY docker/nginx/laravel.conf /etc/nginx/conf.d/default.conf
