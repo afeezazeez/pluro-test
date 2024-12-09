@@ -52,7 +52,7 @@ The documentation for the API can be found- http://localhost:8000/api/documentat
 
 You should be able to visit your app at  http://localhost:8000
 
-
+Live site can be found at https://pluro.netlify.app
 
 
 
