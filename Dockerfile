@@ -35,8 +35,7 @@ COPY . .
 # Install Node.js, npm and run the build
 RUN npm install -g npm@latest n && \
     n latest && \
-    npm install && \
-    npm run build
+    npm install
 
 # Create system user
 RUN useradd -G www-data,root -u $uid -d /home/$user $user && \
