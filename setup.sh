@@ -31,7 +31,6 @@ if [[ "$1" == "start" ]]; then
             fi
 
 
-
     echo "${PINK}Generating app key ..."
     if ! docker-compose exec app php artisan key:generate; then
         echo "${PINK}Error: Failed to generate app key."
@@ -44,14 +43,6 @@ if [[ "$1" == "start" ]]; then
                 echo "${PINK}Error: Failed to generate swagger doc."
                 exit 1
             fi
-
-    echo "${PINK}Building frontend assets ..."
-    if ! docker-compose exec app npm run build; then
-        echo "${PINK}Error: Failed to build frontend assets."
-        exit 1
-    fi
-
-
 
     echo "${GREEN}Setup completed successfully!"
 
