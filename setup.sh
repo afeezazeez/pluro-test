@@ -44,11 +44,18 @@ if [[ "$1" == "start" ]]; then
                 exit 1
             fi
 
-     echo "${PINK}Building frontend assets ..."
-                if ! docker compose exec app npm run build; then
-                    echo "${PINK}Error: Failed to build frontend assets."
-                    exit 1
-                fi
+    # Install dependencies
+    echo -e "${PINK}Installing dependencies ...${RESET}"
+          if ! docker compose exec app npm install; then
+              echo -e "${PINK}Error: Failed to install dependencies.${RESET}"
+              exit 1
+          fi
+
+        # Build frontend assets
+        if ! docker compose exec app npm run build; then
+              echo -e "${PINK}Error: Failed to build frontend assets.${RESET}"
+              exit 1
+        fi
 
     echo "${GREEN}Setup completed successfully!"
 
